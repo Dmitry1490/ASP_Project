@@ -5,7 +5,13 @@ import io.swagger.annotations.ApiOperation;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.AttributeTable;
+import org.bouncycastle.asn1.x500.AttributeTypeAndValue;
+import org.bouncycastle.asn1.x500.RDN;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cms.SignerInformation;
 import org.bouncycastle.cms.jcajce.JcaSimpleSignerInfoVerifierBuilder;
+import org.bouncycastle.tsp.TimeStampToken;
+import org.bouncycastle.util.CollectionStore;
 import org.bouncycastle.util.encoders.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,19 +24,29 @@ import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
-import ru.CryptoPro.CAdES.*;
+import ru.CryptoPro.CAdES.CAdESSignature;
+import ru.CryptoPro.CAdES.CAdESSigner;
+import ru.CryptoPro.CAdES.CAdESSignerXLT1;
+import ru.CryptoPro.CAdES.CAdESType;
 import ru.CryptoPro.Crypto.CryptoProvider;
 import ru.CryptoPro.JCP.JCP;
+import ru.CryptoPro.JCP.tools.Array;
 import ru.CryptoPro.JCSP.JCSP;
 import ru.CryptoPro.reprov.RevCheck;
+import ru.glab.docservice.config.CadesConfiguration;
 import ru.glab.docservice.config.JwtTokenUtil;
 import ru.glab.docservice.model.CurrentUser;
 import ru.glab.docservice.model.JwtRequest;
 import ru.glab.docservice.model.postgres.User;
 import ru.glab.docservice.service.postgres.UsersService;
+
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.*;
+import java.security.cert.*;
+import java.security.cert.Certificate;
 import java.util.*;
 
 import static ru.glab.docservice.util.SecurityConstants.AUTHENTICATE_URL;
@@ -49,12 +65,13 @@ public class JwtAuthenticationController {
     @Autowired
     private UsersService usersService;
 
-    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationController.class);
+    private static final Logger logger = LoggerFactory.getLogger(ru.glab.docservice.controller.JwtAuthenticationController.class);
 
 
     private Map<String, Object> msgMap = new HashMap<>();
 
-    private static boolean resultValid = false;
+    private static boolean resultValidType = false;
+    private static boolean resultValidOGRNandINN = false;
 
 
     @CrossOrigin(origins = "*")
@@ -67,7 +84,7 @@ public class JwtAuthenticationController {
         logger.info("Вызван метод createAuthenticationToken");
 
         if (authenticationRequest == null || authenticationRequest.getUsername().length() == 0 ||
-            authenticationRequest.getPassword().length() == 0) { //Проверяем валидность логина и пароля
+                authenticationRequest.getPassword().length() == 0) { //Проверяем валидность логина и пароля
             msgMap.put("error","Пустые логин или пароль!");
             logger.warn("Пустые логин или пароль!");
             return new ResponseEntity<>(msgMap, HttpStatus.BAD_REQUEST);
@@ -114,7 +131,6 @@ public class JwtAuthenticationController {
         }
     }
 
-
     @CrossOrigin(origins = "*")
     @PostMapping(value = "/validate")
     private void validate() throws Exception {
@@ -130,7 +146,7 @@ public class JwtAuthenticationController {
         Security.addProvider(new JCSP());
 
         // Исходная подпись в виде потока байтов из файла.
-        byte[] array = Files.readAllBytes(Paths.get("/Volumes/Transcend/G-lab/Crypto/!!!!Signature/ИНН+ОГРН_20.03.2020.sig"));
+        byte[] array = Files.readAllBytes(Paths.get("C:\\Users\\Дмитрий\\Desktop\\SignCryptoPro\\ИНН+ОГРН.sig"));
         byte[] decodingArray = Base64.decode(array);
 
         // Декодирует совмещенную подпись с автоопределение типо.
@@ -139,9 +155,55 @@ public class JwtAuthenticationController {
         // Валидация подписи и формирования информации: ОГРН и ИНН подписанта.
         String OGRN_INN = getOGRNAndINN(cAdESSignatureLong);
         if(OGRN_INN == null) System.out.println("ОГРН или ИНН подписанта не найдено");
-        else System.out.println("ОГРН и ИНН: " + OGRN_INN);
+        else {
+            System.out.println("ОГРН и ИНН: " + OGRN_INN);
+            resultValidOGRNandINN = isResultValidOGRNandINN(cAdESSignatureLong, OGRN_INN);
+        }
+        //Резульатат валидации;
+        if(resultValidType & resultValidOGRNandINN) {
+            System.out.println("Подпись валидная");}
+        else System.out.println("Подпись невалидная");
 
         System.out.println("INFO-END!");
+    }
+
+    /**
+     * Проверка на валидность ОГРН и ИНН подписанта;
+     *
+     * @param cAdESSignatureLong CAdES подпись.
+     * @param OGRNandINN ОГРН и ИНН подписанта;
+     */
+    private boolean isResultValidOGRNandINN(CAdESSignature cAdESSignatureLong, String OGRNandINN){
+        boolean OGRNValid = false;
+        boolean INNVAlid = false;
+        String[] split = OGRNandINN.split(" ");
+        String OGRN = split[0];
+        String INN = split[1];
+
+        CollectionStore signatureCertificates = cAdESSignatureLong.getCertificateStore();
+        for (Object certificates: signatureCertificates
+        ) {
+            //Если OGRNValid и INNVAlid true, то ОГРН и ИНН уже были найдены в одном из сертификатов в CollectionStore;
+            if (OGRNValid & INNVAlid) break;
+            // Если OGRNValid или INNVAlid false, то продолжаем искать ОГРН и ИНН в CollectionStore;
+            X509CertificateHolder x509CertificateHolder = (X509CertificateHolder) certificates;
+            RDN[] rdnsOGRN = x509CertificateHolder.getIssuer().getRDNs(new ASN1ObjectIdentifier("1.2.643.100.1"));
+            RDN[] rdnsINN = x509CertificateHolder.getIssuer().getRDNs(new ASN1ObjectIdentifier("1.2.643.3.131.1.1"));
+            if(rdnsOGRN.length > 0){
+                OGRNValid = (rdnsOGRN[0].getTypesAndValues())[0].getValue().toString().equals(OGRN);
+            } else {
+                System.out.println("ОГРН в сертификате не найден");
+                continue;
+            }
+            if(rdnsINN.length > 0){
+                INNVAlid = (rdnsINN[0].getTypesAndValues())[0].getValue().toString().equals(INN);
+            } else {
+                System.out.println("ИНН в сертификате не найден");
+                continue;
+            }
+        }
+        if(OGRNValid & INNVAlid) return true;
+        else return false;
     }
 
     /**
@@ -152,7 +214,7 @@ public class JwtAuthenticationController {
     private String getOGRNAndINN(CAdESSignature cAdESSignatureLong){
         try{
             // Дерево сертификата
-            if(cAdESSignatureLong != null & resultValid) {
+            if(cAdESSignatureLong != null ) {
                 ASN1Set asn1Set = getSignatureInfo(cAdESSignatureLong);
                 DERSequence sequence = (DERSequence)
                         ((DERSequence)
@@ -233,9 +295,9 @@ public class JwtAuthenticationController {
         // Валидация подписи
         try {
             if (CAdESType.CAdES_X_Long_Type_1.equals(signer.getSignatureType())) {
-                resultValid = signer.getSignerInfo().verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC")
+                resultValidType = signer.getSignerInfo().verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider("BC")
                         .build(signer.getSignerCertificate().getPublicKey()));
-                System.out.printf("valid : %b \n", resultValid);
+                System.out.printf("valid : %b \n", resultValidType);
             }
         } catch(Exception ex) {
             System.out.println("valid : false");
@@ -253,7 +315,7 @@ public class JwtAuthenticationController {
      * @param type Тип таблицы: "signed" или "unsigned".
      */
     private static ASN1Set getSignerAttributeTableInfo(int i, AttributeTable table,
-                                                         String type) {
+                                                       String type) {
         if (table == null) {
             return null;
         } // if
@@ -269,4 +331,5 @@ public class JwtAuthenticationController {
         } // while
         return null;
     }
+
 }
