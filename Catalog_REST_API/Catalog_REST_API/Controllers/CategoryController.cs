@@ -6,10 +6,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Catalog_REST_API.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Catalog_REST_API.Controllers
 {
     [Route("[controller]")]
+    [Authorize]
     [ApiController]
     public class CategoryController : ControllerBase
     {

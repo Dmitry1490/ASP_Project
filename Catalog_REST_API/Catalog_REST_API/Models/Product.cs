@@ -8,6 +8,7 @@ namespace Catalog_REST_API.Models
         public Product()
         {
             ProductValue = new HashSet<ProductValue>();
+            ProjectProduct = new HashSet<ProjectProduct>();
         }
 
         public int IdProduct { get; set; }
@@ -24,5 +25,6 @@ namespace Catalog_REST_API.Models
         public virtual Manufacturer IdManufacturerNavigation { get; set; }
         public virtual Qualification IdQualificationNavigation { get; set; }
         public virtual ICollection<ProductValue> ProductValue { get; set; }
+        public virtual ICollection<ProjectProduct> ProjectProduct { get; set; }
     }
 }
