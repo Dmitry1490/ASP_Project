@@ -1,0 +1,22 @@
+﻿<Properties StartupConfiguration="{CD652A4A-1FCB-4121-9648-C1034B8FFD81}|Default">
+  <MonoDevelop.Ide.Workbench>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Catalog_REST_API" expanded="True">
+            <Node name="Catalog_REST_API" expanded="True" selected="True" />
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.Catalog__REST__API PreferredExecutionTarget="/Applications/Safari.app" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/dmitrijbondarenko/Documents/GitHub/G-lab/Catalog_REST_API/Catalog_REST_API/Controllers/SearchController.cs" relfile="Catalog_REST_API/Controllers/SearchController.cs" line="44" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

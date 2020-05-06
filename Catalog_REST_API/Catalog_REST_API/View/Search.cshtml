@@ -1,0 +1,66 @@
+@model Catalog_REST_API.ViewModels.ProductCategoryViewModel
+
+@{
+    ViewData["Title"] = "Search";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<form asp-controller="Search" asp-action="Search" method="get">
+    <p>
+
+        <select asp-for="ProductCategory" asp-items="Model.Category">
+            <option value="">All</option>
+        </select>
+
+        Title: <input type="text" asp-for="SearchString" />
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Product[0].NameProduct)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product[0].IdCategoryNavigation.NameCategory)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product[0].IdManufacturerNavigation.NameManufacturer)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product[0].Description)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Product)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NameProduct)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IdCategoryNavigation.NameCategory)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.IdManufacturerNavigation.NameManufacturer)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Description)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.IdProduct.">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.IdProduct">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.IdProduct">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

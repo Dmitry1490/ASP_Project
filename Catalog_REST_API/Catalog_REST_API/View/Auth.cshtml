@@ -1,0 +1,82 @@
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Auth</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" />
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js" />
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+</head>
+<body class="login-page">
+    <main>
+        <div class="login-block">
+            <img src="1.png" alt="Scanfcode">
+            <h*>Введите свои данные</h*>
+            <form asp-controller="Auth" asp-action="api/CreateToken" metod="post">
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-user ti-user"></i></span>
+                        <input type="text" id="Login" class="form-control" placeholder="Ваш логин">
+                    </div>
+                </div>
+
+                <hr class="hr-xs">
+
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-addon"><i class="fa fa-lock ti-unlock"></i></span>
+                        <input type="password" id="Password" class="form-control" placeholder="Ваш пароль">
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-block" type="submit">ВОЙТИ НА САЙТ</button>
+            </form>
+        </div>
+    </main>
+
+    <script>
+        var tokenKey = "accessToken";
+
+        // отпавка запроса к контроллеру AccountController для получения токена
+        async function getTokenAsync() {
+
+            // получаем данные формы и фомируем объект для отправки
+
+            const formData = new FormData();
+            formData.append("username", document.getElementById("Login").value);
+            formData.append("password", document.getElementById("Password").value);
+
+            // отправляет запрос и получаем ответ
+
+            const response = await fetch("api/CreateToken", {
+                method: "POST",
+                headers: { "Accept": "application/json" },
+                body: formData
+            });
+            // получаем данные
+            const data = await response.json();
+
+            // если запрос прошел нормально
+            if (response.ok === true) {
+
+                // сохраняем в хранилище sessionStorage токен доступа
+
+                sessionStorage.setItem(tokenKey, data.access_token);
+                console.log(data.access_token);
+
+            }
+            else {
+                console.log("Error: ", response.status, data.errorText);
+            }
+        };
+    </script>
+</body >
+</html >
