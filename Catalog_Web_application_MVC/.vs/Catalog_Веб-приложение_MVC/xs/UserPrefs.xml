@@ -1,0 +1,31 @@
+﻿<Properties StartupConfiguration="{E8330537-5BFA-4EF8-ADDA-5B8B87A450FB}|Default">
+  <MonoDevelop.Ide.ItemProperties.Catalog__Веб-приложение__MVC PreferredExecutionTarget="/Applications/Firefox.app" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Catalog_Веб-приложение_MVC/Views/Portfolio/Portfolio.cshtml">
+    <Files>
+      <File FileName="Catalog_Веб-приложение_MVC/Controllers/HomeController.cs" Line="1" Column="1" />
+      <File FileName="Catalog_Веб-приложение_MVC/Views/Portfolio/Portfolio.cshtml" Line="534" Column="50" />
+      <File FileName="Catalog_Веб-приложение_MVC/Controllers/PortfolioController.cs" Line="109" Column="25" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="Catalog_Веб-приложение_MVC" expanded="True">
+            <Node name="Catalog_Веб-приложение_MVC" expanded="True" selected="True" />
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore>
+      <Breakpoint file="/Users/dmitrijbondarenko/Projects/Catalog_Web_application_MVC/Catalog_Веб-приложение_MVC/Specification/TestSpec.cs" relfile="Catalog_Веб-приложение_MVC/Specification/TestSpec.cs" line="18" column="1" />
+      <Breakpoint file="/Users/dmitrijbondarenko/Projects/Catalog_Web_application_MVC/Catalog_Веб-приложение_MVC/Views/Portfolio/Portfolio.cshtml" relfile="Catalog_Веб-приложение_MVC/Views/Portfolio/Portfolio.cshtml" line="488" column="1" />
+    </BreakpointStore>
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
