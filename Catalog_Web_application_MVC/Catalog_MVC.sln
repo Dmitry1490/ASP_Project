@@ -1,0 +1,17 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Catalog_MVC", "Catalog_MVC\Catalog_MVC.csproj", "{E8330537-5BFA-4EF8-ADDA-5B8B87A450FB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E8330537-5BFA-4EF8-ADDA-5B8B87A450FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8330537-5BFA-4EF8-ADDA-5B8B87A450FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8330537-5BFA-4EF8-ADDA-5B8B87A450FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8330537-5BFA-4EF8-ADDA-5B8B87A450FB}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

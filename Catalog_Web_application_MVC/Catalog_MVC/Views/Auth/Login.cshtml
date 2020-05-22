@@ -1,0 +1,67 @@
+﻿@model Catalog_Веб_приложение_MVC.ViewModels.LoginModel
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <title>Signin Template for Bootstrap</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.0/examples/sign-in/">
+
+    <!-- Bootstrap core CSS -->
+    <link href="../../dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="signin.css" rel="stylesheet">
+    <script src="moz-extension://d617bcf3-35ed-c247-89a3-bd820eb3711a/assets/prompt.js"></script>
+</head>
+
+<body class="text-center">
+    <form class="form-signin" asp-action="Login" asp-controller="Auth" asp-anti-forgery="true">
+
+        <img class="mb-4" src="~/img/Depositphotos_316902366_ds.jpg" alt="" width="350" height="200">
+        <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
+
+        <div class="form-group row">
+            <label for="password" class="col-md-4 col-form-label text-md-right">Email address</label>
+            <div class="col-md-4">
+                <input type="text" asp-for="Email" id="email" class="form-control" name="email" required autofocus>
+                <span asp-validation-for="Email" />
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
+            <div class="col-md-4">
+                <input type="password" asp-for="Password" id="Password" class="form-control" name="Password" required>
+                <span asp-validation-for="Password" />
+            </div>
+        </div>
+
+        <label>
+            <input type="checkbox" value="remember-me"> Remember me
+        </label>
+
+        <div class="col-md-4 offset-md-4">
+            <button type="submit" class="btn-lg btn-primary">
+                Login
+            </button>
+            <a href="#" class="btn-lg btn-link" type="submit" onclick="window.location.href='@Url.Action("Register", "Auth")';">
+                Register
+            </a>
+        </div>
+
+
+        
+        <div>@ViewData["message"]</div>
+    </form>
+
+
+
+</body>
+</html>
