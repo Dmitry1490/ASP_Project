@@ -62,7 +62,7 @@ namespace Catalog_Веб_приложение_MVC.Controllers
             if (model.Projectname.Length != 0 && model.Email.Length != 0)
             {
 
-                var userEmail = HttpContext.User.Claims.FirstOrDefault()?.Value;
+                var userEmail = HttpContext.User.Claims.FirstOrDefault()?.Value; //Пользуйтесь FirstOrDefault т.к. если юзера нет, будет нулреф
                 if (userEmail != null && userEmail.Equals(model.Email))
                 {
                     User user = _context.User.Where(u => u.EMail == model.Email).FirstOrDefault();
@@ -77,13 +77,16 @@ namespace Catalog_Веб_приложение_MVC.Controllers
                     TempData["Warning"] = "Wrang Email!";
                     TempData["Success"] = null;
                     ViewBag.Message = String.Format("Warning! Wrang email: {0}. Enter your account email", model.Email);
-                    return View(outputModel);
+                    return View(outputModel);//Без модели у Вас на этом месте должно было крашиться. Модель должна быть именно из вью
+                                             //Portfolio.cshtml т.е. ProductCategoryViewModel. Так и планировалось?  У Вас здесь View(), когда вот так было
+                                             //все нормально приходило?
+
 
             }
             TempData["Warning"] = "Wrang Fill out!";
             TempData["Success"] = null;
             ViewBag.Message = String.Format("Warning! Fill out all field!.");
-            return View(outputModel);
+            return View(outputModel);//Без модели у Вас на этом месте должно было крашиться
         }
 
         [HttpPost]
